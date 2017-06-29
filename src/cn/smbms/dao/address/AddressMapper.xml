@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smbms.dao.address.AddressMapper">
+	<!-- 第一种动态sql -->
+	<!-- <select id="sele_like1" parameterType="Address" resultType="Address"> 
+		select * from smbms_address <where> <if test="contact !=null and contact 
+		!='' " > and contact LIKE CONCAT ('%',#{contact},'%') </if> <if test="addressDesc 
+		!=null and addressDesc !=''"> and addressDesc LIKE CONCAT ('%',#{addressDesc},'%') 
+		</if> <if test="userId !=null and userId !=0"> AND userId=#{userId} </if> 
+		</where> </select> -->
+
+
+	 <!-- 第二种动态sql -->
+	<!--<select id="sele_like2" parameterType="Address" resultType="Address">
+		select * from smbms_address
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="contact !=null and contact !='' "> and contact LIKE
+				CONCAT ('%',#{contact},'%') </if>
+			<if test="addressDesc !=null and addressDesc !=''"> and addressDesc LIKE CONCAT ('%',#{addressDesc},'%')
+			</if>
+			<if test="userId !=null and userId !=0"> AND userId=#{userId} </if>
+		</trim>
+	</select> -->
+
+
+	 <!-- 第三种动态sql -->
+	<!-- <select id="sele_like3" parameterType="Address" resultType="Address">
+		select * from smbms_address where 1=1
+
+		<if test="contact !=null and contact !='' "> and contact LIKE
+			CONCAT ('%',#{contact},'%') </if>
+		<if test="addressDesc !=null and addressDesc !=''"> and addressDesc LIKE CONCAT ('%',#{addressDesc},'%') </if>
+		<if test="userId !=null and userId !=0"> AND userId=#{userId} </if>
+
+	</select> -->
+	<!-- 第四种动态sql -->
+
+	<!-- <update id="updateAdrress" parameterType="Address">
+		update smbms_address
+		<set>
+			<if test="contact !=null and contact!=''">contact=#{contact}, </if>
+			<if test="addressDesc !=null and addressDesc!=''"> addressDesc=#{addressDesc} ,</if>
+			<if test="userId !=null and userId!=0">userId=#{userId}</if>
+		</set>
+		where id=#{id}
+	</update>
+ -->
+	<!-- 第五种动态sql -->
+	<select id="getaddressMap" resultType="Address">
+		select * from smbms_address where userId in
+		<!-- 重点注意 item="与接口里传的参数一致" #{provid与接口里传的参数一致} collection="测试类里map的参数" -->
+		<foreach collection="list" item="mapp" open="(" separator="," close=")">
+			#{mapp}
+		</foreach>
+
+	</select>
+	
+	<!-- 第六种动态sql -->
+	<select id="selechose" resultType="Address">
+		select * from smbms_address  where 1=1
+		<choose>
+			<when test="contact !=null and contact !=''">
+				and contact like CONCAT('%',#{contact},'%')
+			</when>
+			<when test="addressDesc !=null and addressDesc !=''">
+				and addressDesc like CONCAT('%',#{addressDesc},'%')
+			</when>
+			
+			<otherwise>
+				and userId=#{userId}
+			</otherwise>
+		</choose>
+	</select>
+	
+
+</mapper>

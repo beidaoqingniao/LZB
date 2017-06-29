@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smbms.dao.provider.ProviderMapper">
+
+	<!-- 查询所有的供应商 -->
+	<select id="selePro" resultType="Provider">
+		select * from smbms_provider
+	</select>
+
+	<!-- 通过id修改供应商的信息 -->
+	<update id="upPro" parameterType="Provider">
+	
+	<!-- set的第一种动态sql -->
+		<!-- update smbms_provider
+		<set>
+			<if test="proName !=null and userName!=''">proName=#{proName},</if>
+			<if test="proDesc !=null and userName!=''">proDesc=#{proDesc},</if>
+			<if test="proContact !=null and userName!=''">proContact=#{proContact},</if>
+		</set>
+		where id=#{id} -->
+		
+		
+	<!-- set的第二种动态sql -->
+	update smbms_provider
+		<trim prefix="set" suffix="where id=#{id}" suffixOverrides=",">
+			<if test="proName !=null and proName!=''">proName=#{proName},</if>
+			<if test="proDesc !=null and proDesc!=''">proDesc=#{proDesc},</if>
+			<if test="proContact !=null and proContact!=''">proContact=#{proContact},</if>
+		</trim>
+		
+	
+
+
+	</update>
+
+
+	<!-- 通过id删除 -->
+	<delete id="delePro" parameterType="int">
+		delete from smbms_provider
+		where id=#{id}
+	</delete>
+
+
+	<!-- 添加供应商信息 -->
+	<insert id="addPro" parameterType="Provider">
+		insert into smbms_provider
+		(proCode,proName,proDesc,proContact,proPhone,proAddress,
+		proFax,modifyBy,modifyDate,createdBy,creationDate)
+		values
+		(#{proCode},#{proName},#{proDesc},#{proContact},#{proPhone},#{proAddress},
+		#{proFax},#{modifyBy},#{modifyDate},#{createdBy},#{creationDate})
+	</insert>
+
+	<!-- 根据供应商的id查询出对应的订单集合 -->
+	<resultMap type="Provider" id="bill_list">
+		<result property="id" column="id" />
+		<result property="proCode" column="proCode" />
+		<result property="proName" column="proName" />
+		<result property="proContact" column="proContact" />
+		<result property="proPhone" column="proPhone" />
+		<collection property="billlist" ofType="Bill">
+			<result property="billCode" column="billCode" />
+			<result property="productName" column="productName" />
+			<result property="totalPrice" column="totalPrice" />
+			<result property="isPayment" column="isPayment" />
+		</collection>
+	</resultMap>
+	<select id="getBilllist" resultMap="bill_list">
+		select * from smbms_provider
+		p,smbms_bill b where p.id=#{id} and
+		p.id=b.providerId
+	</select>
+	
+	<select id="selechose" resultType="Provider">
+		select * from smbms_provider where 1=1
+		<choose>
+			<when test="proCode !=null and proCode !=''">
+				and proCode like CONCAT('%',#{proCode},'%')
+			</when>
+			<when test="proName !=null and proName !=''">
+				and proName like CONCAT('%',#{proName},'%')
+			</when>
+			<when test="proAddress !=null and proAddress !=''">
+				and proAddress like CONCAT('%',#{proAddress},'%')
+			</when>
+			<otherwise>
+				and YEAR(creationDate)=YEAR(#{creationDate})
+			</otherwise>
+			
+		</choose>
+	</select>
+</mapper>

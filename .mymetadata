@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="LZB"
+  id="myeclipse.1495446814551"
+  context-root="/LZB"
+  j2ee-spec="5.0"
+  archive="LZB.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

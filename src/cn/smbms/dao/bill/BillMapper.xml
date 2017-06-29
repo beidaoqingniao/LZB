@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.smbms.dao.bill.BillMapper">
+<!-- 条件1：模糊查询 按商品名称，供应商id  是否付款查询   条件2：显示自己想显示的字段（两个表）-->
+	<resultMap type="Bill" id="bill_provider">
+		<result property="billCode" column="billCode"/>
+		<result property="productName" column="productName"/>
+		<result property="providerId" column="providerId"/>
+		<result property="totalPrice" column="totalPrice"/>
+		<result property="isPayment" column="isPayment"/>
+		
+		<association property="provider"  javaType="Provider">
+			<result property="proName" column="proName"/>
+			<result property="proContact" column="proContact"/>
+			<result property="proCode" column="proCode"/>
+			<result property="proPhone" column="proPhone"/>
+		</association>
+	</resultMap>
+
+
+	<select id="sele_like"  resultMap="bill_provider">
+	<!-- 必须传3个参数的sql -->
+	<!-- SELECT * FROM smbms_bill b,smbms_provider p
+	 WHERE productName LIKE CONCAT ('%',#{productName},'%') 
+	 AND providerId=#{providerId} AND isPayment=#{isPayment} and b.providerId=p.id  -->
+	 
+	 
+	<!--  动态sql方法一： -->
+	SELECT * FROM smbms_bill b,smbms_provider p
+	 WHERE   b.providerId=p.id  
+	 <if test="productName !=null and productName !='' " > and productName LIKE CONCAT ('%',#{productName},'%') </if>
+	 <if test="providerId !=null and providerId !=0"> AND providerId=#{providerId}</if>
+	 <if test="isPayment !=null and isPayment !=0"> AND isPayment=#{isPayment} </if>
+	 order by billCode DESC limit #{from},#{pageSize}
+	
+	<!--  动态sql方法二 -->
+	<!--   智能作用：自动剔除and  -->
+	<!-- SELECT * FROM smbms_bill b,smbms_provider p
+	 <where>  
+	 <if test="productName !=null and productName !='' " > and productName LIKE CONCAT ('%',#{productName},'%') </if>
+	 <if test="providerId !=null and providerId !=0"> AND providerId=#{providerId}</if>
+	 <if test="isPayment !=null and isPayment !=0"> AND isPayment=#{isPayment} </if>
+	</where> -->
+	
+	<!-- SELECT * FROM smbms_bill b,smbms_provider p
+	<trim prefix="where" prefixOverrides="and|or">
+		<if test="productName !=null and productName !='' " > and productName LIKE CONCAT ('%',#{productName},'%') </if>
+	 	<if test="providerId !=null and providerId !=0"> and providerId=#{providerId}</if>
+	 	<if test="isPayment !=null and isPayment !=0"> and isPayment=#{isPayment} </if>
+	</trim> -->
+	</select>
+
+<!-- 通过供应商id获得所以得订单 -->
+<select id="getBill" resultType="Bill">
+select * from smbms_bill where providerId in
+<!-- 重点注意  item="provid"  #{provid} 和接口里传的参数值，三个要保持一致 -->
+<foreach collection="array" item="provid" open="(" separator="," close=")">
+	#{provid}
+</foreach>
+
+</select>
+
+
+
+<select id="getBilll" resultType="Bill">
+select * from smbms_bill where providerId in
+<!-- 重点注意  item="provid"  #{provid} 和接口里传的参数值，三个要保持一致 -->
+<foreach collection="list" item="provlist" open="(" separator="," close=")">
+	#{provlist}
+</foreach>
+
+</select>
+
+
+<select id="getBillMap" resultType="Bill">
+select * from smbms_bill where isPayment=#{isPayment} and providerId  in
+<!-- 重点注意  item="与接口里传的参数一致"  #{provid与接口里传的参数一致}  collection="测试类里map的参数"-->
+<foreach collection="suiban" item="mapp" open="(" separator="," close=")">
+	#{mapp}
+</foreach>
+
+</select>
+
+
+</mapper>

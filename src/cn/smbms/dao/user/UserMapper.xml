@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="cn.smbms.dao.user.UserMapper">
+
+	<!-- 查询用户表记录数 -->
+	<!-- <select id="count" resultType="int">
+		select count(1) as count from smbms_user
+	</select> -->
+<!-- 通过id查找获得对象 -->
+<select id="IdgetUser" parameterType="Integer" resultType="User">
+	select * from smbms_user where id=#{id}
+</select>
+	<!-- 查询用户列表 -->
+	<!-- <select id="getUserList" resultType="user">
+		select * from smbms_user
+	</select>	 -->
+	
+	<!-- <resultMap type="User" id="roleNameMap">
+		<result property="id" column="id"/>
+		<result property="userName" column="userName"/>
+		<result property="userRole" column="userRole"/>
+		<result property="userRoleName" column="roleName"/>
+	</resultMap>
+	
+	<select id="getUserList" resultMap="roleNameMap" parameterType="User">
+	 select u.* ,r.roleName from smbms_user u,smbms_role r 
+	 where u.userName like CONCAT ('%',#{userName},'%') and u.userRole=#{userRole} and
+	 u.userRole=r.id
+	</select>
+	
+	 <resultMap type="User" id="roleNameMap2">
+		<result property="id" column="id"/>
+		<result property="userName" column="userName"/>
+		<result property="userRole" column="userRole"/>
+		<result property="userRoleName" column="roleName"/>
+		<association property="role" javaType="Role">
+			<id property="id" column="id"/>
+			<result property="roleCode" column="roleCode"/>
+			<result property="roleName" column="roleName"/>
+		</association>
+	</resultMap>
+	
+	<select id="Listrole" parameterType="Integer" resultMap="roleNameMap2">
+		select * from smbms_user u,smbms_role r
+		where u.userRole=#{userRole} and u.userRole=r.id
+	</select> 
+	
+	
+	<resultMap type="User" id="roleNameMap3">
+		<result property="id" column="id"/>
+		<result property="userName" column="userName"/>
+		<result property="userRole" column="userRole"/>
+		<result property="userRoleName" column="roleName"/>
+		<collection property="addressList" ofType="Address">
+		当实体类的id
+			<id property="id" column="a_id"/>
+			<result property="postCode" column="postCode"/>
+			<result property="addressDesc" column="addressDesc"/>
+		</collection>
+	</resultMap>
+	
+	<select id="Listroleaddress" parameterType="Integer" resultMap="roleNameMap3">
+		SELECT u.* ,a.id as a_id, a.addressDesc  FROM smbms_user u,smbms_address a
+		WHERE u.id=#{id} AND u.id=a.userId
+	</select>  -->
+	
+	
+</mapper>
